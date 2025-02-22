@@ -1,4 +1,4 @@
-/* Ejercisio de la clase 3  sillas del teatro*/
+/* Ejercisio de la clase 3 sillas del teatro*/
 #include <iostream>
 #include <cctype>
 using namespace std;
