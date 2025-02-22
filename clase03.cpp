@@ -150,6 +150,12 @@ void menu() {
             cin.ignore(10000, '\n');  // Descarta la entrada incorrecta
             continue;  // Vuelve a solicitar la opción
         }
+
+        // Verificar si la opción está en el rango válido
+        if (opcion < 1 || opcion > 5) {
+            cout << "Opción inválida. Intente nuevamente.\n";
+            continue;  // Volver al inicio del bucle
+        }
         
         switch (opcion) {
             case 1:
