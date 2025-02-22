@@ -1,6 +1,7 @@
 /* Ejercisio de la clase 3 sillas del teatro*/
 #include <iostream>
-#include <cctype>
+#include <cctype> //para usar colocar caracteres en mayusculas
+#include <limits> //para limpiar el buffer de entrada 
 using namespace std;
 
 char mappa[10][15];
@@ -142,19 +143,13 @@ void menu() {
         cout << "5. Salir" << endl;
         cout << "Seleccione una opción: ";
         cin >> opcion;
-
-        // Verificar si la entrada es válida
-        if (!(cin >> opcion)) { 
-            cout << "Entrada inválida. Por favor, ingrese un número del 1 al 5.\n";
-            cin.clear();  // Limpia el estado de error
-            cin.ignore(10000, '\n');  // Descarta la entrada incorrecta
-            continue;  // Vuelve a solicitar la opción
-        }
-
-        // Verificar si la opción está en el rango válido
-        if (opcion < 1 || opcion > 5) {
+        
+        // Validar entrada
+        if (cin.fail() || opcion < 1 || opcion > 5) {
             cout << "Opción inválida. Intente nuevamente.\n";
-            continue;  // Volver al inicio del bucle
+            cin.clear(); // Limpiar estado de error de cin
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Limpiar buffer de entrada
+            continue; // Volver al inicio del bucle
         }
         
         switch (opcion) {
