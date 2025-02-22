@@ -142,6 +142,14 @@ void menu() {
         cout << "5. Salir" << endl;
         cout << "Seleccione una opción: ";
         cin >> opcion;
+
+        // Verificar si la entrada es válida
+        if (!(cin >> opcion)) { 
+            cout << "Entrada inválida. Por favor, ingrese un número del 1 al 5.\n";
+            cin.clear();  // Limpia el estado de error
+            cin.ignore(10000, '\n');  // Descarta la entrada incorrecta
+            continue;  // Vuelve a solicitar la opción
+        }
         
         switch (opcion) {
             case 1:
