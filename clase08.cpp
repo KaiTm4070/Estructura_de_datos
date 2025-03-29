@@ -10,15 +10,11 @@ struct Estudiante {
     Estudiante* siguiente;
 };
 
-//validad string vacio
-bool esValido(const std::string& input) {
-    return !input.empty() && input.find_first_not_of(' ') != std::string::npos;
-}
-
 class ListaEstudiantes {
 private:
     Estudiante* cabeza;
 
+    // Funcion para id
     bool idExiste(int id) {
         if (!cabeza) return false;
         
@@ -29,6 +25,11 @@ private:
         } while (actual != cabeza);
         
         return false;
+    }
+
+    //validad string vacio
+    bool esValido(const std::string& input) {
+        return !input.empty() && input.find_first_not_of(' ') != std::string::npos;
     }
 
 public:
@@ -101,6 +102,7 @@ public:
         cout << "Estudiante no encontrado.\n";
     }
 
+    // Funcion eliminar estudiante
     void eliminarEstudiante() {
         if (!cabeza) {
             cout << "No hay estudiantes registrados.\n";
@@ -130,7 +132,8 @@ public:
         
         cout << "Estudiante no encontrado.\n";
     }
-
+    
+    // Funcion Actulaizar promedio
     void actualizarPromedio() {
         if (!cabeza) {
             cout << "No hay estudiantes registrados.\n";
@@ -163,6 +166,7 @@ public:
         cout << "Estudiante no encontrado.\n";
     }
 
+    // Funcion mostrar mejor promedio
     void mostrarMejorEstudiante() {
         if (!cabeza) {
             cout << "No hay estudiantes registrados.\n";
