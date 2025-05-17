@@ -21,6 +21,7 @@ vector<vector<Arista>> grafo;
 int numNodos = 0;
 
 // Función para crear nodos
+// Función para crear nodos
 void crearGrafo() {
     while (true) {
         cout << "¿Cuántos nodos tendrá el grafo?: ";
@@ -33,74 +34,77 @@ void crearGrafo() {
             break; // entrada válida, sal del ciclo
         }
     }
-
     nodos.resize(numNodos);
     grafo.clear();
     grafo.resize(numNodos);
 
-    cout << "Ingresa el valor para cada nodo:\n";
+    cout << "Ingresa el valor para cada nodo (debe ser único):\n";
     for (int i = 0; i < numNodos; ++i) {
+        string valor;
+        bool repetido;
+        do {
+            repetido = false;
+            cout << "Valor del nodo " << (i + 1) << ": ";
+            cin >> valor;
+            // Verificar si el valor ya fue usado
+            for (int j = 0; j < i; ++j) {
+                if (nodos[j].valor == valor) {
+                    cout << "Error: ya existe un nodo con el valor \"" << valor << "\". Ingresa un valor diferente.\n";
+                    repetido = true;
+                    break;
+                }
+            }
+        } while (repetido);
         nodos[i].id = i;
-        cout << "Valor del nodo " << (i + 1) << ": ";
-        cin >> nodos[i].valor;
+        nodos[i].valor = valor;
     }
 
     cout << "Grafo creado con " << numNodos << " nodos.\n\n";
 }
 
+// Función auxiliar para obtener índice por valor
+int obtenerIndicePorValor(const string& valor) {
+    for (int i = 0; i < numNodos; ++i) {
+        if (nodos[i].valor == valor) {
+            return i;
+        }
+    }
+    return -1; // no encontrado
+}
 
-// Función para insertar/conectar aristas con peso
+// Función para insertar/conectar aristas con peso usando el valor del nodo
 void insertarConexiones() {
     if (numNodos == 0) {
         cout << "Primero crea el grafo (opción 1).\n\n";
         return;
     }
 
-    int conexiones;
     int maxConexiones = numNodos * numNodos;
-
-    // Validar entrada de número de conexiones
-    while (true) {
-        cout << "¿Cuántas conexiones (aristas dirigidas) quieres agregar? (máximo " << maxConexiones << "): ";
-        if (!(cin >> conexiones) || conexiones < 1 || conexiones > maxConexiones) {
-            cout << "Entrada inválida. Ingresa un número entre 1 y " << maxConexiones << ".\n";
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        } else {
-            break;
-        }
-    }
-
     int conexionesActuales = 0;
+    int numConexion = 1;
 
-    for (int i = 0; i < conexiones; ++i) {
-        if (conexionesActuales >= maxConexiones) {
-            cout << "Ya alcanzaste el máximo número de conexiones posibles para este grafo.\n";
-            break;
-        }
-        
+    cout << "\n=== Insertar Conexiones (máximo " << maxConexiones << ") ===\n";
+
+    while (conexionesActuales < maxConexiones) {
+        string origenValor, destinoValor;
         int origen, destino, peso;
-        
-        // Validar origen y destino
+        // Validar entrada de valores
         while (true) {
-            cout << "Conexión #" << i + 1 << " - Origen (1 a " << numNodos << "): ";
-            if (!(cin >> origen) || origen < 1 || origen > numNodos) {
-                cout << "Índice inválido. Intenta de nuevo.\n";
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Conexión #" << numConexion << " - Valor del nodo origen: ";
+            cin >> origenValor;
+            origen = obtenerIndicePorValor(origenValor);
+            if (origen == -1) {
+                cout << "El nodo con valor \"" << origenValor << "\" no existe. Intenta de nuevo.\n";
                 continue;
             }
             
-            cout << "Destino (1 a " << numNodos << "): ";
-            if (!(cin >> destino) || destino < 1 || destino > numNodos) {
-                cout << "Índice inválido. Intenta de nuevo.\n";
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Valor del nodo destino: ";
+            cin >> destinoValor;
+            destino = obtenerIndicePorValor(destinoValor);
+            if (destino == -1) {
+                cout << "El nodo con valor \"" << destinoValor << "\" no existe. Intenta de nuevo.\n";
                 continue;
             }
-            origen--;
-            destino--;
-            
             // Verificar si la conexión ya existe
             bool existe = false;
             for (const Arista& a : grafo[origen]) {
@@ -109,15 +113,12 @@ void insertarConexiones() {
                     break;
                 }
             }
-            
             if (existe) {
                 cout << "La conexión ya existe. No se agregará.\n";
-                continue; // no aumentar contador ni repetir el índice
+                continue;
             }
-            
-            break; // entrada válida, salir del ciclo
+            break;
         }
-        
         // Validar peso
         while (true) {
             cout << "Peso de la arista: ";
@@ -130,17 +131,25 @@ void insertarConexiones() {
             }
         }
         
-        // Agregar la arista
         grafo[origen].push_back({destino, peso});
         conexionesActuales++;
-        cout << "Conexión agregada.\n";
+        cout << "Conexión agregada: " << origenValor << " → " << destinoValor << " [peso: " << peso << "]\n";
+        numConexion++;
+        
+        if (conexionesActuales >= maxConexiones) {
+            cout << "Has alcanzado el número máximo de conexiones permitidas.\n";
+            break;
+        }
+        
+        char continuar;
+        cout << "¿Deseas agregar otra conexión? (s/n): ";
+        cin >> continuar;
+        if (continuar != 's' && continuar != 'S') {
+            break;
+        }
     }
-
     cout << "\n";
 }
-
-
-
 
 
 // Mostrar grafo con pesos y conexiones
@@ -171,8 +180,8 @@ void mostrarGrafo() {
         for (const Arista& arista : grafo[nodo.id]) {
             if (arista.destino != nodo.id) {
                 cout << "  " << nodo.valor << " (" << nodo.id + 1 << ") → "
-                    << nodos[arista.destino].valor << " (" << arista.destino + 1 << ")"
-                    << " [peso: " << arista.peso << "]\n";
+                     << nodos[arista.destino].valor << " (" << arista.destino + 1 << ")"
+                     << " [peso: " << arista.peso << "]\n";
             }
         }
         cout << "\n";
@@ -219,4 +228,3 @@ int main() {
 
     return 0;
 }
-
